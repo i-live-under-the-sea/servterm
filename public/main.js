@@ -6,10 +6,6 @@ function output(){
 	if(txt != ""){
 		document.getElementById("setter").value += txt;
 		writeit(document.getElementById("setter"))
-	}else{
-		document.getElementById("setter").value += "Command Not Found \n";
-		writeit(document.getElementById("setter"))
-		writeit(document.getElementById("setter"))
 	}
 }
 
@@ -70,14 +66,14 @@ var cursor = $("#cursor");
 				//new line
 				var arr = get.split("\\n");
 				var said = arr[arr.length-2];
-				if(said != "" && said.includes("cd") == false && said.includes("ls") == false){
+				if(said != "" && said.includes("cd") == false && said.includes("ls") == false && said.includes("rm") == false && said.includes("mv") == false && said.includes("cp") == false && said.includes("zip") == false && said.includes("mkdir") == false && said.includes("touch") == false){
 					var oReq = new XMLHttpRequest();
 					oReq.addEventListener("load", output);
 					oReq.open("GET", "ajax.php?shell=" + said);
 					oReq.send();
 				}else if(said.includes("cd")){
 					if(said == "cd /" || said == "cd C:" || said == "cd c:"){
-						localStorage.setItem("path", "/")
+						localStorage.setItem("path", said)
 					}else{
 						var input = said.substring(3)
 						if(localStorage.getItem("path") == null){
@@ -94,6 +90,39 @@ var cursor = $("#cursor");
 					treq.addEventListener("load", output);
 					treq.open("GET", "ajax.php?path=" + localStorage.getItem("path"));
 					treq.send();
+				}else if(said.includes("rm -")){
+					var dels = said.split(" ")
+					var zreq = new XMLHttpRequest();
+					zreq.addEventListener("load", output);
+					zreq.open("GET", "ajax.php?dell=" + dels['0'] + " " + dels['1'] + " " +localStorage.getItem("path") + dels['2']);
+					zreq.send();
+				}else if(said.includes("rm")){
+					var rm = said.substring(3)
+					var sreq = new XMLHttpRequest();
+					sreq.addEventListener("load", output);
+					sreq.open("GET", "ajax.php?del=" + localStorage.getItem("path") + "/" + rm);
+					sreq.send();
+				}else if(said.includes("mv") || said.includes("cp") || said.includes("zip")){
+					var cmds = said.split(" ")
+					var ffl = localStorage.getItem("path") + "/" + cmds[1];
+					var sfl = localStorage.getItem("path") + "/" + cmds[2]
+					var mreq = new XMLHttpRequest();
+					mreq.addEventListener("load", output);
+					mreq.open("GET", "ajax.php?what=" + cmds[0] + "&ffl=" + ffl + "&sfl=" + sfl);
+					mreq.send();
+				}else if(said.includes("touch") || said.includes("mkdir")){
+					var namee = said.substring(6)
+					if(said.includes("touch")){
+						var breq = new XMLHttpRequest();
+						breq.addEventListener("load", output);
+						breq.open("GET", "ajax.php?tc=hi&name=" + localStorage.getItem("path") + "/"+ namee);
+						breq.send();
+					}else{
+						var dreq = new XMLHttpRequest();
+						dreq.addEventListener("load", output);
+						dreq.open("GET", "ajax.php?md=hi&name=" + localStorage.getItem("path") + "/"+ namee);
+						dreq.send();
+					}
 				}
 			}
 			moveIt(this.value.length, event);
