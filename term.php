@@ -16,7 +16,7 @@
 		}
 	</style>
 </head>
-<body>
+<body onload="localStorage.setItem('path', './')">
 	<main id="container">
 		<div id="terminal">
 		<section id="terminal__bar">          
